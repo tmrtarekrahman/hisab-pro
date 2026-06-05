@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1020">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hisab Pro">
+<link rel="manifest" href="manifest.json">
+<title>হিসাব Pro v3.0 Cross Checked Stable</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b1020;--card:#12182a;--card2:#1b2440;--glass:rgba(255,255,255,.06);
+  --income:#22c55e;--expense:#f43f5e;--accent:#7c3aed;--blue:#38bdf8;--warn:#f59e0b;
+  --text:#eef2ff;--muted:#94a3b8;--border:rgba(255,255,255,.12);--radius:18px
+}
+.light{--bg:#f5f7fb;--card:#ffffff;--card2:#eef2ff;--glass:rgba(0,0,0,.035);--text:#111827;--muted:#64748b;--border:#d9e1f2}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Hind Siliguri',sans-serif;background:radial-gradient(circle at top,#182044 0,var(--bg) 42%);color:var(--text);min-height:100vh;padding-bottom:98px}
+.header{padding:18px 16px 20px;position:sticky;top:0;z-index:100;background:linear-gradient(135deg,rgba(124,58,237,.22),rgba(56,189,248,.12));backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.header h1{font-size:22px}.header-date{font-size:12px;color:var(--muted)}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card,.mini-card{background:linear-gradient(180deg,var(--glass),transparent),var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:15px;margin-bottom:14px;box-shadow:0 10px 25px rgba(0,0,0,.14)}
+.mini-card{margin-bottom:0;text-align:center;padding:12px}.label{font-size:11px;color:var(--muted)}.amount{font-size:17px;font-weight:800;margin-top:3px}.income{color:var(--income)}.expense{color:var(--expense)}.accent{color:var(--accent)}.blue{color:var(--blue)}.warn{color:var(--warn)}
+.content{padding:14px}.section{display:none}.section.active{display:block}h3{font-size:15px;margin-bottom:12px}
+input,select,button{font-family:inherit}input,select{width:100%;padding:12px;background:var(--card2);border:1px solid var(--border);border-radius:12px;color:var(--text);outline:none}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}.input-group{margin-bottom:12px}
+.btn{width:100%;padding:13px;border:0;border-radius:12px;background:linear-gradient(135deg,var(--accent),#4f46e5);color:#fff;font-weight:700;cursor:pointer}.btn.green{background:var(--income)}.btn.red{background:var(--expense)}.btn.gray{background:var(--card2);border:1px solid var(--border);color:var(--text)}.btn.warn{background:var(--warn)}
+.type-toggle{display:flex;gap:8px;margin-bottom:14px}.type-btn{flex:1;padding:10px;border-radius:12px;border:2px solid var(--border);background:transparent;color:var(--muted);font-weight:700}
+.type-btn.active.incomeBtn{border-color:var(--income);color:var(--income);background:rgba(34,197,94,.12)}.type-btn.active.expenseBtn{border-color:var(--expense);color:var(--expense);background:rgba(244,63,94,.12)}
+.item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;margin-bottom:8px;display:flex;gap:11px;align-items:center}.ico{width:42px;height:42px;border-radius:14px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:20px}.info{flex:1;min-width:0}.title{font-weight:700;font-size:14px}.meta{font-size:12px;color:var(--muted);margin-top:2px}.amt{font-weight:800}.act{cursor:pointer;color:var(--muted);font-size:17px;padding:4px}
+.progress{height:8px;background:var(--card2);border-radius:99px;overflow:hidden;margin-top:7px}.bar{height:8px;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--blue))}
+.score-wrap{display:flex;align-items:center;gap:14px}.score-circle{width:86px;height:86px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--income) var(--p),var(--card2) 0);font-weight:900;font-size:22px}.score-circle span{background:var(--card);width:66px;height:66px;border-radius:50%;display:grid;place-items:center}
+.insight{background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.35);padding:11px;border-radius:13px;margin-bottom:8px;font-size:13px}.warnbox{background:rgba(245,158,11,.14);border-color:rgba(245,158,11,.45)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(18,24,42,.94);backdrop-filter:blur(14px);border-top:1px solid var(--border);display:flex;padding:8px 0 20px;z-index:200}.light .bottom-nav{background:rgba(255,255,255,.94)}
+.nav{flex:1;text-align:center;cursor:pointer}.nav .i{font-size:21px}.nav .l{font-size:10px;color:var(--muted)}.nav.active .l{color:var(--blue);font-weight:700}
+canvas{width:100%;height:220px;background:var(--card2);border:1px solid var(--border);border-radius:14px}.chip{display:inline-block;padding:7px 12px;border:1px solid var(--border);border-radius:999px;margin:0 5px 8px 0;color:var(--muted);font-size:13px}.chip.active{color:#fff;background:var(--accent)}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--income);color:#fff;padding:10px 18px;border-radius:999px;opacity:0;transition:.3s;z-index:999;white-space:nowrap}.toast.show{opacity:1}.toast.err{background:var(--expense)}
+@media(min-width:700px){.content{max-width:760px;margin:auto}.grid4{grid-template-columns:repeat(4,1fr)}}@media(max-width:430px){.grid3{gap:6px}.mini-card{padding:10px 5px}.amount{font-size:14px}}
+
+@media print{
+  body{background:#fff;color:#111;padding-bottom:0}
+  .header,.bottom-nav,#page-dashboard,#page-add,#page-list,#page-loan,#page-settings,.chip,.btn{display:none!important}
+  .content{max-width:100%;padding:0}
+  #page-report{display:block!important}
+  .card,.mini-card{box-shadow:none;border:1px solid #ddd;background:#fff;color:#111}
+}
+
+.alert80{background:rgba(245,158,11,.14);border-color:rgba(245,158,11,.45)}
+.alert100{background:rgba(244,63,94,.14);border-color:rgba(244,63,94,.45)}
+.risk-low{color:var(--income)}.risk-mid{color:var(--warn)}.risk-high{color:var(--expense)}
+
+.receipt-img{width:70px;height:70px;object-fit:cover;border-radius:12px;border:1px solid var(--border)}
+.receipt-full{width:100%;max-height:420px;object-fit:contain;border-radius:14px;border:1px solid var(--border);background:var(--card2)}
+
+.gradeBox{padding:14px;border-radius:14px;text-align:center;margin-bottom:10px;background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(56,189,248,.15))}
+.gradeLetter{font-size:42px;font-weight:900}
+.metricGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+.core-badge{display:inline-block;padding:4px 9px;border-radius:999px;background:rgba(34,197,94,.14);color:var(--income);font-size:11px;margin-left:6px}
+
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-day{padding:8px 4px;border-radius:10px;background:var(--card2);text-align:center;font-size:11px;border:1px solid var(--border);min-height:54px}
+.cal-day.income-day{background:rgba(34,197,94,.18)}
+.cal-day.expense-day{background:rgba(244,63,94,.18)}
+.cal-day.mixed-day{background:rgba(245,158,11,.18)}
+.cal-head{font-size:11px;color:var(--muted);text-align:center;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top"><h1>💰 হিসাব Pro <span class="core-badge">v3.0 Checked</span></h1><span id="todayDate" class="header-date"></span></div>
+  <div class="grid3">
+    <div class="mini-card"><div class="label">মোট আয়</div><div id="totalIncome" class="amount income">৳০</div></div>
+    <div class="mini-card"><div class="label">মোট খরচ</div><div id="totalExpense" class="amount expense">৳০</div></div>
+    <div class="mini-card"><div class="label">ব্যালেন্স</div><div id="totalBalance" class="amount blue">৳০</div></div>
+  </div>
+</div>
+
+<div class="content">
+<section id="page-dashboard" class="section active">
+  <div class="grid4">
+    <div class="mini-card"><div class="label">আজ খরচ</div><div id="dashToday" class="amount expense">৳০</div></div>
+    <div class="mini-card"><div class="label">এই সপ্তাহ</div><div id="dashWeek" class="amount warn">৳০</div></div>
+    <div class="mini-card"><div class="label">এই মাস</div><div id="dashMonth" class="amount expense">৳০</div></div>
+    <div class="mini-card"><div class="label">মোট ঋণ বাকি</div><div id="dashLoan" class="amount blue">৳০</div></div>
+  </div>
+  <div class="card"><h3>💳 Wallet Summary</h3><div id="walletDash" class="grid4"></div><div class="meta" style="margin-top:8px">Wallet dropdown ও category dropdown এখন stable migration সহ ঠিক করা হয়েছে।</div></div>
+  <div class="card"><h3>💎 Net Worth</h3><div id="netWorthDash"></div></div>
+  <div class="card"><h3>🏆 Financial Health Score</h3><div class="score-wrap"><div id="scoreCircle" class="score-circle" style="--p:0%"><span id="scoreText">0</span></div><div><div id="scoreTitle" class="title">ডেটা দিন</div><div id="scoreNote" class="meta">আয়-খরচ যোগ করলে স্কোর দেখাবে।</div></div></div></div>
+  <div class="card"><h3>🚨 Budget Alert Center</h3><div id="budgetAlerts"></div></div>
+  <div class="card"><h3>📅 Upcoming Payments</h3><div id="upcomingPayments"></div></div>
+  <div class="card"><h3>🔵 Loan Reminder</h3><div id="loanDashAlerts"></div></div>
+  <div class="card"><h3>🎯 Savings Goals</h3><div id="goalDashboard"></div></div><div class="card"><h3>🧠 Financial Intelligence</h3>
+    <div id="financialGrade"></div>
+    <div id="financialMetrics"></div>
+    </div>
+    <div class="card"><h3>💹 Income Source Analytics</h3><div id="incomeSourceDash"></div></div>
+    <div class="card"><h3>🤖 Smart Insights</h3><div id="dashInsights"></div></div>
+  <div class="card"><h3>🕘 Recent Transactions</h3><div id="recentList"></div></div>
+</section>
+
+<section id="page-add" class="section">
+  <div class="card"><h3 id="formTitle">নতুন এন্ট্রি</h3>
+    <div class="type-toggle"><button id="btnIncome" class="type-btn incomeBtn active" onclick="setType('income')">✅ আয়</button><button id="btnExpense" class="type-btn expenseBtn" onclick="setType('expense')">🔴 খরচ</button></div>
+    <div class="input-group"><label>পরিমাণ</label><input id="amount" type="number" placeholder="০"></div>
+    <div class="grid2"><div class="input-group"><label>ক্যাটাগরি</label><select id="category"></select></div><div class="input-group"><label>Wallet</label><select id="wallet"></select></div></div>
+    <div class="input-group"><label>তারিখ</label><input id="date" type="date"></div>
+    <div class="input-group"><label>Income Source / Expense Source</label><input id="source" placeholder="যেমন: Adobe, SKS, Salary, Personal"></div>
+    <div class="input-group"><label>বিবরণ</label><input id="note" placeholder="যেমন: খাবার / সিগারেট"></div>
+    <div class="input-group"><label>Receipt / Screenshot</label><input id="receiptFile" type="file" accept="image/*"></div>
+    <div id="receiptPreview" class="meta"></div>
+    <button id="saveBtn" class="btn" onclick="saveTransaction()">সেভ করো</button><button id="cancelBtn" style="display:none;margin-top:8px" class="btn gray" onclick="cancelEdit()">এডিট বাতিল</button>
+  </div>
+  <div class="card"><h3>⚡ একসাথে একাধিক এন্ট্রি</h3><div id="bulkRows"></div><button class="btn green" onclick="addBulkRow()">লাইন যোগ করো</button><button class="btn" style="margin-top:8px" onclick="saveBulk()">সব সেভ করো</button></div>
+</section>
+
+<section id="page-list" class="section">
+  <div class="card"><div class="grid2"><input id="searchBox" placeholder="সার্চ: খাবার, সিগারেট..." oninput="renderList()"><select id="filterType" onchange="renderList()"><option value="all">সব</option><option value="income">আয়</option><option value="expense">খরচ</option></select></div></div><div id="transactionList"></div>
+</section>
+
+<section id="page-report" class="section">
+  <div><span class="chip active" onclick="setPeriod('all',this)">সব</span><span class="chip" onclick="setPeriod('month',this)">এই মাস</span><span class="chip" onclick="setPeriod('week',this)">এই সপ্তাহ</span><span class="chip" onclick="setPeriod('today',this)">আজ</span></div>
+  <div class="card"><h3>📈 সারসংক্ষেপ</h3><div class="grid3"><div class="mini-card"><div class="label">আয়</div><div id="rIncome" class="amount income">৳০</div></div><div class="mini-card"><div class="label">খরচ</div><div id="rExpense" class="amount expense">৳০</div></div><div class="mini-card"><div class="label">সঞ্চয়</div><div id="rBalance" class="amount blue">৳০</div></div></div></div>
+  <div class="card"><h3>📊 আয় বনাম খরচ</h3><canvas id="barChart" width="700" height="260"></canvas></div>
+  <div class="card"><h3>🍩 খরচের Doughnut Chart</h3><canvas id="doughnutChart" width="700" height="300"></canvas></div>
+  <div class="card"><h3>💹 Income Source Chart</h3><canvas id="incomeSourceChart" width="700" height="300"></canvas></div>
+  <div class="card"><h3>📅 মাসওয়ারি তুলনা</h3><canvas id="monthChart" width="700" height="260"></canvas></div>
+  
+  <div class="card"><h3>🔒 Monthly Close & Archive</h3>
+    <button class="btn" onclick="closeCurrentMonth()">এই মাস Close করো</button>
+    <div id="monthStatus" style="margin-top:10px"></div><div class="meta" style="margin-top:6px">Close করলে ঐ মাসের edit/delete বন্ধ থাকবে।</div>
+    <div id="monthlyArchive" style="margin-top:10px"></div>
+  </div>
+  <div class="card"><h3>📆 Financial Calendar</h3><div id="financialCalendar"></div></div>
+
+  <div class="card"><h3>🧾 Monthly Closing Report</h3><div id="monthlyClosing"></div></div>
+  <div class="card"><h3>💸 ক্যাটাগরি রিপোর্ট</h3><div id="catList"></div></div>
+  <button class="btn green" onclick="exportPDF()">Monthly PDF / Print</button>
+</section>
+
+<section id="page-loan" class="section">
+  <div class="card"><h3>🔵 Advanced Loan Manager</h3>
+    <div class="grid2"><input id="loanPerson" placeholder="নাম"><input id="loanAmount" type="number" placeholder="টাকা"></div>
+    <div class="grid2" style="margin-top:10px">
+      <select id="loanType"><option value="taken">ঋণ নিয়েছি</option><option value="given">ঋণ দিয়েছি</option><option value="repaid">আমি পরিশোধ করেছি</option><option value="received">আমি টাকা ফেরত পেয়েছি</option></select>
+      <input id="loanDue" type="date" title="Due Date">
+    </div>
+    <div class="grid2" style="margin-top:10px"><input id="loanInterest" type="number" placeholder="Interest % optional"><input id="loanNote" placeholder="নোট"></div>
+    <button class="btn" style="margin-top:10px" onclick="saveLoan()">Loan Entry সেভ</button>
+  </div>
+
+  <div class="card"><h3>🚨 Loan Alerts</h3><div id="loanAlerts"></div></div>
+  <div id="loanList"></div>
+</section>
+
+<section id="page-settings" class="section">
+  
+<div class="card"><h3>🎯 Savings Goal Tracker</h3>
+<div class="grid2">
+<input id="goalName" placeholder="Goal Name">
+<input id="goalTarget" type="number" placeholder="Target Amount">
+</div>
+<div class="grid2" style="margin-top:10px">
+<input id="goalSaved" type="number" placeholder="Already Saved">
+<input id="goalDeadline" type="date">
+</div>
+<button class="btn" style="margin-top:10px" onclick="saveGoal()">Goal সেভ</button>
+<div id="goalList" style="margin-top:12px"></div>
+</div>
+<div class="card"><h3>💳 Wallet Manager</h3>
+    <div class="grid2"><input id="walletName" placeholder="Wallet নাম"><input id="walletStart" type="number" placeholder="Starting Balance"></div>
+    <button class="btn" style="margin-top:10px" onclick="saveWallet()">Wallet সেভ</button>
+    <div id="walletList" style="margin-top:12px"></div>
+  </div>
+  <div class="card"><h3>💸 Budget Limit</h3><div class="grid2"><select id="budgetCat"></select><input id="budgetAmt" type="number" placeholder="মাসিক লিমিট"></div><button class="btn" style="margin-top:10px" onclick="saveBudget()">লিমিট সেভ</button><div id="budgetList" style="margin-top:12px"></div></div>
+  <div class="card"><h3>🔁 Recurring / Upcoming Payment</h3>
+  <div class="grid2"><select id="recType"><option value="expense">খরচ</option><option value="income">আয়</option></select><input id="recAmt" type="number" placeholder="টাকা"></div>
+  <div class="grid2" style="margin-top:10px"><input id="recDay" type="number" min="1" max="28" placeholder="মাসের দিন"><input id="recNote" placeholder="যেমন: রুম ভাড়া"></div>
+  <div class="grid2" style="margin-top:10px"><select id="recCategory"></select><select id="recWallet"></select></div>
+  <button class="btn" style="margin-top:10px" onclick="saveRecurring()">Recurring সেভ</button>
+  <div id="recList" style="margin-top:12px"></div>
+  </div>
+  <div class="card"><h3>🔐 PIN Lock</h3><input id="pinInput" type="password" placeholder="৪ সংখ্যার PIN"><button class="btn" style="margin-top:10px" onclick="savePIN()">PIN সেট/পরিবর্তন</button></div>
+  <div class="card"><h3>📲 Install App</h3>
+    <p class="meta">Chrome/Android এ Install করলে অ্যাপের মতো চলবে। Offline cache support যোগ করা হয়েছে।</p>
+    <button id="installBtn" class="btn green" onclick="installPWA()" style="display:none">Install Hisab Pro</button>
+    <button class="btn gray" style="margin-top:8px" onclick="showToast('Chrome menu → Add to Home screen / Install App')">Manual Install Help</button>
+  </div>
+  <div class="card"><h3>🎨 Theme</h3><button class="btn gray" onclick="toggleTheme()">Dark / Light Toggle</button></div>
+  <div class="card"><h3>📤 Backup / Export</h3><button class="btn green" onclick="exportData()">JSON Backup</button><button class="btn gray" style="margin-top:8px" onclick="exportCSV()">CSV / Excel Export</button><input id="importFile" type="file" accept=".json" style="display:none" onchange="importData(event)"><button class="btn gray" style="margin-top:8px" onclick="importFile.click()">Backup Restore</button><button class="btn red" style="margin-top:8px" onclick="clearAll()">সব ডেটা মুছো</button></div>
+</section>
+
+<section id="page-assets" class="section">
+  <div class="card"><h3>💎 Asset Tracker</h3>
+    <div class="grid2"><input id="assetName" placeholder="Asset Name যেমন: Laptop"><input id="assetValue" type="number" placeholder="Value"></div>
+    <div class="grid2" style="margin-top:10px"><select id="assetType"><option value="physical">Physical Asset</option><option value="cash">Cash/Bank Asset</option><option value="digital">Digital Asset</option><option value="other">Other</option></select><input id="assetNote" placeholder="Note"></div>
+    <button class="btn" style="margin-top:10px" onclick="saveAsset()">Asset সেভ</button>
+  </div>
+  <div class="card"><h3>📊 Net Worth Summary</h3><div id="netWorthSummary"></div></div>
+  <div class="card"><h3>📈 Net Worth History</h3><canvas id="netWorthChart" width="700" height="260"></canvas></div>
+  <div id="assetList"></div>
+</section>
+
+<section id="page-receipts" class="section">
+  <div class="card"><h3>🧾 Receipt / Invoice Gallery</h3><div id="receiptGallery"></div></div>
+</section>
+</div>
+
+<div class="bottom-nav">
+  <div class="nav active" onclick="showPage('dashboard')"><div class="i">🏠</div><div class="l">Dashboard</div></div>
+  <div class="nav" onclick="showPage('add')"><div class="i">➕</div><div class="l">যোগ</div></div>
+  <div class="nav" onclick="showPage('list')"><div class="i">📋</div><div class="l">লেনদেন</div></div>
+  <div class="nav" onclick="showPage('report')"><div class="i">📊</div><div class="l">রিপোর্ট</div></div>
+  <div class="nav" onclick="showPage('loan')"><div class="i">🔵</div><div class="l">ঋণ</div></div>
+  <div class="nav" onclick="showPage('assets')"><div class="i">💎</div><div class="l">Assets</div></div>
+  <div class="nav" onclick="showPage('receipts')"><div class="i">🧾</div><div class="l">Receipt</div></div>
+  <div class="nav" onclick="showPage('settings')"><div class="i">⚙️</div><div class="l">সেটিংস</div></div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const INCOME_CATS=['বেতন','ব্যবসা','ফ্রিল্যান্স','ভাড়া','বিনিয়োগ','উপহার','অন্যান্য আয়'];
+const EXPENSE_CATS=['বাজার','খাবার','যাতায়াত','বাড়িভাড়া','বিদ্যুৎ/গ্যাস','চিকিৎসা','শিক্ষা','পোশাক','বিনোদন','মোবাইল','সিগারেট','ঋণ পরিশোধ','অন্যান্য খরচ'];
+const ICON={'খাবার':'🍽️','সিগারেট':'🚬','বাজার':'🛒','যাতায়াত':'🚌','পোশাক':'👕','বিনোদন':'🎬','মোবাইল':'📱','ঋণ পরিশোধ':'💳','বেতন':'💼','ফ্রিল্যান্স':'💻','অন্যান্য খরচ':'📦'};
+let transactions=[],loans=[],budgets={},recurring=[],wallets={},goals={},assets=[],netWorthHistory=[],currentType='income',currentPeriod='all',editId=null,db;
+function openDB(){return new Promise((res,rej)=>{let r=indexedDB.open('HisabProV21DB',11);r.onupgradeneeded=e=>{db=e.target.result;['tx','loans','rec','assets'].forEach(s=>{if(!db.objectStoreNames.contains(s))db.createObjectStore(s,{keyPath:'id'})});if(!db.objectStoreNames.contains('kv'))db.createObjectStore('kv')};r.onsuccess=e=>{db=e.target.result;res()};r.onerror=()=>{console.error(r.error);rej(r.error)}})}
+function all(s){return new Promise(res=>{try{let q=db.transaction(s).objectStore(s).getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])}catch(e){console.warn('Store missing',s,e);res([])}})}
+function put(s,o){return new Promise(res=>{let q=db.transaction(s,'readwrite').objectStore(s).put(o);q.onsuccess=res})}
+function del(s,id){return new Promise(res=>{let q=db.transaction(s,'readwrite').objectStore(s).delete(id);q.onsuccess=res})}
+function kvGet(k){return new Promise(res=>{let q=db.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result)})}
+function kvSet(k,v){return new Promise(res=>{let q=db.transaction('kv','readwrite').objectStore('kv').put(v,k);q.onsuccess=res})}
+function fmt(n){return Math.abs(Number(n||0)).toLocaleString('bn-BD')}
+function fmtSigned(n){n=Number(n||0);return (n<0?'-':'')+'৳'+Math.abs(n).toLocaleString('bn-BD')}
+async function init(){await openDB();transactions=await all('tx');loans=await all('loans');recurring=await all('rec');assets=await all('assets');netWorthHistory=await kvGet('netWorthHistory')||[];budgets=await kvGet('budgets')||{};wallets=await kvGet('wallets')||{'Cash':0,'bKash':0,'Nagad':0,'Bank':0};goals=await kvGet('goals')||{};if(await kvGet('theme')==='light')document.body.classList.add('light');todayDate.textContent=new Date().toLocaleDateString('bn-BD',{day:'numeric',month:'long',year:'numeric'});date.value=new Date().toISOString().slice(0,10);updateCats();fillWalletSelect();fillBudgetCats();fillRecurringSelects();await runRecurring();checkPIN();updateAll();nightlyReminder();addBulkRow();}
+function updateAll(){updateSummary();renderDashboard();}
+function setType(t){currentType=t;btnIncome.classList.toggle('active',t==='income');btnExpense.classList.toggle('active',t==='expense');updateCats();}
+function updateCats(){
+ let el=document.getElementById('category'); if(!el)return;
+ let custom=JSON.parse(localStorage.getItem('hisab_custom_categories')||'{"income":[],"expense":[]}');
+ let arr=(currentType==='income'?INCOME_CATS:EXPENSE_CATS).concat(custom[currentType]||[]);
+ el.innerHTML=[...new Set(arr)].map(x=>`<option value="${x}">${x}</option>`).join('');
+}
+function fillBudgetCats(){budgetCat.innerHTML=EXPENSE_CATS.map(x=>`<option>${x}</option>`).join('')}
+async function saveTransaction(){let a=+amount.value;if(!a)return showToast('পরিমাণ লিখো',1);if(isMonthLocked(date.value))return showToast('🔒 এই মাস Close করা আছে',1);let receipt=await readReceiptFile();let old=editId?transactions.find(x=>x.id===editId):null;let t={id:editId||Date.now(),type:currentType,amount:a,category:category.value,wallet:wallet.value||'Cash',date:date.value,source:(source.value||'').trim(),note:note.value.trim(),receipt:receipt||(old&&old.receipt)||''};await put('tx',t);transactions=await all('tx');cancelEdit(1);updateAll();showToast('✅ সেভ হয়েছে');checkBudget(t)}
+function editTransaction(id){let t=transactions.find(x=>x.id===id);if(!t)return;if(isMonthLocked(t.date))return showToast('🔒 Closed month-এর entry edit করা যাবে না',1);editId=id;setType(t.type);amount.value=t.amount;category.value=t.category;date.value=t.date;wallet.value=t.wallet||'Cash';if(window.source)source.value=t.source||'';note.value=t.note||'';if(window.receiptPreview)receiptPreview.innerHTML=t.receipt?'<img class="receipt-img" src="'+t.receipt+'">':'';formTitle.textContent='এন্ট্রি এডিট';saveBtn.textContent='আপডেট করো';cancelBtn.style.display='block';showPage('add')}
+function cancelEdit(s){editId=null;amount.value='';if(window.source)source.value='';note.value='';if(window.receiptFile)receiptFile.value='';if(window.receiptPreview)receiptPreview.innerHTML='';formTitle.textContent='নতুন এন্ট্রি';saveBtn.textContent='সেভ করো';cancelBtn.style.display='none';if(!s)showToast('এডিট বাতিল')}
+async function deleteTransaction(id){let t=transactions.find(x=>x.id===id);if(t&&isMonthLocked(t.date))return showToast('🔒 Closed month-এর entry delete করা যাবে না',1);if(!confirm('মুছবে?'))return;await del('tx',id);transactions=await all('tx');renderList();updateAll()}
+function addBulkRow(){bulkRows.insertAdjacentHTML('beforeend',`<div class="grid2 bulk" style="margin-bottom:8px"><input type="number" placeholder="টাকা"><input placeholder="বিবরণ"></div>`)}
+async function saveBulk(){let c=0;for(const r of document.querySelectorAll('.bulk')){let a=+r.children[0].value;if(a){await put('tx',{id:Date.now()+c,type:currentType,amount:a,category:category.value,wallet:wallet.value||'Cash',date:date.value,source:(source.value||'').trim(),note:r.children[1].value});c++}}bulkRows.innerHTML='';addBulkRow();transactions=await all('tx');updateAll();showToast(`✅ ${c}টা সেভ হয়েছে`)}
+function sum(list,type){return list.filter(x=>x.type===type).reduce((s,x)=>s+x.amount,0)}
+function rangeExpense(days){let d=new Date();d.setDate(d.getDate()-days);return transactions.filter(t=>t.type==='expense'&&new Date(t.date)>=d).reduce((s,t)=>s+t.amount,0)}
+function monthExpense(){let ym=new Date().toISOString().slice(0,7);return transactions.filter(t=>t.type==='expense'&&t.date.slice(0,7)===ym).reduce((s,t)=>s+t.amount,0)}
+function updateSummary(){let i=sum(transactions,'income'),e=sum(transactions,'expense');totalIncome.textContent='৳'+fmt(i);totalExpense.textContent='৳'+fmt(e);totalBalance.textContent='৳'+fmt(i-e);renderBudgets();renderRecurring()}
+function loanBalance(){
+ let m=0;
+ loans.forEach(l=>{
+  if(l.type==='taken')m+=l.amount;
+  if(l.type==='repaid')m-=l.amount;
+ });
+ return m;
+}
+function loanReceivable(){
+ let m=0;
+ loans.forEach(l=>{
+  if(l.type==='given')m+=l.amount;
+  if(l.type==='received')m-=l.amount;
+ });
+ return m;
+}
+function healthScore(){let i=sum(transactions,'income'),e=sum(transactions,'expense'),loan=loanBalance();if(i<=0&&e<=0)return 0;let saveRate=i?Math.max(0,(i-e)/i):0;let score=60;score+=Math.min(25,saveRate*100);if(e>i&&i>0)score-=25;if(loan>i*.4&&i>0)score-=10;let c={};transactions.filter(t=>t.type==='expense').forEach(t=>c[t.category]=(c[t.category]||0)+t.amount);let top=Math.max(0,...Object.values(c));if(e&&top/e>.45)score-=8;return Math.max(0,Math.min(100,Math.round(score)))}
+function renderDashboard(){let today=new Date().toISOString().slice(0,10);dashToday.textContent='৳'+fmt(transactions.filter(t=>t.type==='expense'&&t.date===today).reduce((s,t)=>s+t.amount,0));dashWeek.textContent='৳'+fmt(rangeExpense(7));dashMonth.textContent='৳'+fmt(monthExpense());dashLoan.textContent='৳'+fmt(loanBalance());let sc=healthScore();scoreText.textContent=sc;scoreCircle.style.setProperty('--p',sc+'%');scoreTitle.textContent=sc>=80?'খুব ভালো':sc>=60?'মোটামুটি ভালো':sc>=40?'সতর্ক হওয়া দরকার':'ঝুঁকিপূর্ণ';scoreNote.textContent=sc>=80?'খরচ কন্ট্রোলে আছে।':sc>=60?'আরও কিছু খরচ কমালে ভালো হবে।':'Budget ও অপ্রয়োজনীয় খরচ কমানো দরকার।';renderInsightsDash();renderRecent();renderWalletDash();renderGoalDashboard();renderBudgetAlerts();renderUpcomingPayments();renderFinancialIntelligence();renderLoanAlerts();renderNetWorth();renderIncomeSourceDash();}
+function renderInsightsDash(){let i=sum(transactions,'income'),e=sum(transactions,'expense'),html='';if(e>i&&i>0)html+=`<div class="insight warnbox">⚠️ মোট খরচ আয়ের চেয়ে ৳${fmt(e-i)} বেশি।</div>`;let c={};transactions.filter(t=>t.type==='expense').forEach(t=>c[t.category]=(c[t.category]||0)+t.amount);let top=Object.entries(c).sort((a,b)=>b[1]-a[1])[0];if(top)html+=`<div class="insight">💡 সবচেয়ে বেশি খরচ: ${top[0]} — ৳${fmt(top[1])}</div>`;let mb=Object.entries(budgets).find(([cat,lim])=>{let ym=new Date().toISOString().slice(0,7);let used=transactions.filter(t=>t.category===cat&&t.type==='expense'&&t.date.slice(0,7)===ym).reduce((s,t)=>s+t.amount,0);return used>lim});if(mb)html+=`<div class="insight warnbox">🚨 ${mb[0]} budget limit পার হয়েছে।</div>`;html+=monthlyOverspendingInsight();dashInsights.innerHTML=html||'<div class="insight">এখনো বড় কোনো সমস্যা দেখা যাচ্ছে না।</div>'}
+function renderRecent(){let list=[...transactions].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).slice(0,5);recentList.innerHTML=list.length?list.map(t=>itemHTML(t)).join(''):'<div class="meta">এখনো লেনদেন নেই</div>'}
+function itemHTML(t){return `<div class="item"><div class="ico">${ICON[t.category]||'💸'}</div><div class="info"><div class="title">${t.category}</div><div class="meta">${t.date} — ${t.wallet||'Cash'}${t.source?' — '+t.source:''} — ${t.note||''}</div></div><div class="amt ${t.type==='income'?'income':'expense'}">${t.type==='income'?'+':'-'}৳${fmt(t.amount)}</div></div>`}
+function renderList(){let q=searchBox.value.toLowerCase(),f=filterType.value;let list=transactions.filter(t=>(f==='all'||t.type===f)&&((t.note||'').toLowerCase().includes(q)||t.category.toLowerCase().includes(q)));list.sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);transactionList.innerHTML=list.length?list.map(t=>`<div class="item"><div class="ico" onclick="detailTransaction(${t.id})">${t.receipt?'🧾':(ICON[t.category]||'💸')}</div><div class="info" onclick="detailTransaction(${t.id})"><div class="title">${t.category}</div><div class="meta">${t.date} — ${t.wallet||'Cash'}${t.source?' — '+t.source:''} — ${t.note||''}</div></div><div class="amt ${t.type==='income'?'income':'expense'}">${t.type==='income'?'+':'-'}৳${fmt(t.amount)}</div><div class="act" title="Duplicate" onclick="duplicateTransaction(${t.id})">⧉</div><div class="act" title="Edit" onclick="editTransaction(${t.id})">✎</div><div class="act" title="Delete" onclick="deleteTransaction(${t.id})">✕</div></div>`).join(''):`<div class="card">কোনো লেনদেন নেই</div>`}
+function setPeriod(p,el){currentPeriod=p;document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));el.classList.add('active');renderReport()}
+function filtered(){let n=new Date();if(currentPeriod==='today')return transactions.filter(t=>t.date===n.toISOString().slice(0,10));if(currentPeriod==='week'){let d=new Date();d.setDate(d.getDate()-7);return transactions.filter(t=>new Date(t.date)>=d)}if(currentPeriod==='month')return transactions.filter(t=>t.date.slice(0,7)===n.toISOString().slice(0,7));return transactions}
+function renderReport(){let list=filtered(),i=sum(list,'income'),e=sum(list,'expense');rIncome.textContent='৳'+fmt(i);rExpense.textContent='৳'+fmt(e);rBalance.textContent='৳'+fmt(i-e);drawBar(i,e);drawDoughnut(list);drawIncomeSourceChart(list);drawMonths();renderMonthArchive();renderFinancialCalendar();renderMonthlyClosing(list,i,e);renderCat(list)}
+function renderCat(list){let m={};list.filter(t=>t.type==='expense').forEach(t=>m[t.category]=(m[t.category]||0)+t.amount);let total=Object.values(m).reduce((a,b)=>a+b,0)||1;catList.innerHTML=Object.entries(m).sort((a,b)=>b[1]-a[1]).map(([c,a])=>`<div class="item"><div class="info"><div class="title">${ICON[c]||'💸'} ${c}</div><div class="progress"><div class="bar" style="width:${a/total*100}%;background:var(--expense)"></div></div></div><b class="expense">৳${fmt(a)}</b></div>`).join('')||'কোনো খরচ নেই'}
+function drawBar(i,e){let c=barChart,ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);let mx=Math.max(i,e,1);[['আয়',i,'#22c55e',130],['খরচ',e,'#f43f5e',390]].forEach(x=>{let h=x[1]/mx*170;ctx.fillStyle=x[2];ctx.fillRect(x[3],220-h,120,h);ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--text');ctx.font='22px Hind Siliguri';ctx.fillText(x[0],x[3]+35,248);ctx.font='18px Hind Siliguri';ctx.fillText('৳'+fmt(x[1]),x[3]-5,210-h)})}
+
+function drawDoughnut(list){
+  let c=doughnutChart,ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
+  let cats={};list.filter(t=>t.type==='expense').forEach(t=>cats[t.category]=(cats[t.category]||0)+t.amount);
+  let arr=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,6),total=arr.reduce((s,x)=>s+x[1],0);
+  if(!total){ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--muted');ctx.font='22px Hind Siliguri';ctx.fillText('খরচের ডেটা নেই',270,155);return}
+  let colors=['#f43f5e','#f59e0b','#38bdf8','#7c3aed','#22c55e','#ec4899'];
+  let start=-Math.PI/2,cx=210,cy=150,r=95;
+  arr.forEach((x,i)=>{let ang=x[1]/total*Math.PI*2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,start+ang);ctx.closePath();ctx.fillStyle=colors[i%colors.length];ctx.fill();start+=ang});
+  ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc(cx,cy,52,0,Math.PI*2);ctx.fill();ctx.globalCompositeOperation='source-over';
+  ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--text');ctx.font='20px Hind Siliguri';ctx.fillText('৳'+fmt(total),cx-38,cy+7);
+  arr.forEach((x,i)=>{let y=65+i*34;ctx.fillStyle=colors[i%colors.length];ctx.fillRect(390,y,18,18);ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--text');ctx.font='17px Hind Siliguri';ctx.fillText(`${x[0]} — ৳${fmt(x[1])}`,420,y+15)});
+}
+function renderMonthlyClosing(list,i,e){
+  let byDay={},cats={};list.filter(t=>t.type==='expense').forEach(t=>{byDay[t.date]=(byDay[t.date]||0)+t.amount;cats[t.category]=(cats[t.category]||0)+t.amount});
+  let topDay=Object.entries(byDay).sort((a,b)=>b[1]-a[1])[0],topCat=Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
+  let save=i-e,rate=i?Math.round(save/i*100):0;
+  monthlyClosing.innerHTML=`<div class="grid2">
+    <div class="mini-card"><div class="label">Saving Rate</div><div class="amount ${rate>=20?'income':rate>=0?'warn':'expense'}">${rate}%</div></div>
+    <div class="mini-card"><div class="label">Net Balance</div><div class="amount ${save>=0?'income':'expense'}">৳${fmt(save)}</div></div>
+  </div>
+  <div style="height:10px"></div>
+  <div class="insight">🏆 Top Category: ${topCat?topCat[0]+' — ৳'+fmt(topCat[1]):'ডেটা নেই'}</div>
+  <div class="insight">📅 Top Spending Day: ${topDay?topDay[0]+' — ৳'+fmt(topDay[1]):'ডেটা নেই'}</div>
+  <div class="insight ${e>i&&i?'warnbox':''}">📝 Closing Note: ${e>i&&i?'এই মাসে খরচ আয়ের চেয়ে বেশি। Budget কমানো দরকার।':rate>=20?'এই মাসে সঞ্চয় ভালো হয়েছে।':'আরও সঞ্চয় বাড়ানো সম্ভব।'}</div>`;
+}
+async function duplicateTransaction(id){
+  let t=transactions.find(x=>x.id===id);if(!t)return;
+  let copy={...t,id:Date.now(),note:(t.note||'')+' কপি'};
+  await put('tx',copy);transactions=await all('tx');renderList();updateAll();showToast('✅ Duplicate করা হয়েছে');
+}
+function detailTransaction(id){
+  let t=transactions.find(x=>x.id===id);if(!t)return;
+  let box=document.createElement('div');
+  box.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;padding:18px;overflow:auto';
+  box.innerHTML=`<div class="card" style="max-width:520px;margin:30px auto"><h3>লেনদেন বিস্তারিত</h3>
+  <p class="meta">ধরন: ${t.type==='income'?'আয়':'খরচ'}</p>
+  <p class="meta">ক্যাটাগরি: ${t.category}</p>
+  <p class="meta">পরিমাণ: ৳${fmt(t.amount)}</p>
+  <p class="meta">তারিখ: ${t.date}</p>
+  <p class="meta">Wallet: ${t.wallet||'Cash'}</p><p class="meta">Source: ${t.source||'N/A'}</p>
+  <p class="meta">নোট: ${t.note||'নেই'}</p>
+  ${t.receipt?`<div style="height:12px"></div><img class="receipt-full" src="${t.receipt}">`:'<p class="meta">Receipt নেই</p>'}
+  <button class="btn gray" style="margin-top:12px" onclick="this.closest('div[style*=fixed]').remove()">Close</button></div>`;
+  document.body.appendChild(box);
+}
+
+
+
+function getMonthKey(d){
+  let dt=new Date(d);
+  if(isNaN(dt)) return String(d).slice(0,7);
+  return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0');
+}
+function getMonthArchives(){
+  try{return JSON.parse(localStorage.getItem('hisab_month_archive')||'[]')}catch(e){return []}
+}
+function saveMonthArchives(v){
+  localStorage.setItem('hisab_month_archive',JSON.stringify(v));
+}
+function isMonthLocked(date){
+  let key=String(date||'').slice(0,7);
+  return getMonthArchives().some(x=>x.key===key);
+}
+function closeCurrentMonth(){
+  let now=new Date(), key=getMonthKey(now);
+  let list=transactions.filter(t=>getMonthKey(t.date)===key);
+  if(!list.length){showToast('এই মাসে কোনো ডেটা নেই',1);return}
+  let income=list.filter(t=>t.type==='income').reduce((s,t)=>s+Number(t.amount||0),0);
+  let expense=list.filter(t=>t.type==='expense').reduce((s,t)=>s+Number(t.amount||0),0);
+  let cats={}, src={};
+  list.filter(t=>t.type==='expense').forEach(t=>cats[t.category]=(cats[t.category]||0)+Number(t.amount||0));
+  list.filter(t=>t.type==='income').forEach(t=>{let k=t.source||t.category||'Unknown';src[k]=(src[k]||0)+Number(t.amount||0)});
+  let topCat=Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
+  let topSrc=Object.entries(src).sort((a,b)=>b[1]-a[1])[0];
+  let archive=getMonthArchives().filter(x=>x.key!==key);
+  archive.push({key,income,expense,balance:income-expense,count:list.length,topCategory:topCat?topCat[0]:'N/A',topSource:topSrc?topSrc[0]:'N/A',closedAt:new Date().toISOString()});
+  saveMonthArchives(archive);
+  renderMonthArchive();
+  showToast('🔒 Month closed হয়েছে, এখন edit/delete locked');
+}
+function renderMonthArchive(){
+  if(!window.monthlyArchive)return;
+  let a=getMonthArchives().sort((x,y)=>y.key.localeCompare(x.key));
+  monthlyArchive.innerHTML=a.length?a.map(m=>`
+    <div class="item">
+      <div class="ico">📦</div>
+      <div class="info">
+        <div class="title">${m.key} Locked</div>
+        <div class="meta">Income ৳${fmt(m.income)} | Expense ৳${fmt(m.expense)} | Balance ${fmtSigned(m.balance)}</div>
+        <div class="meta">Top Category: ${m.topCategory} | Top Source: ${m.topSource} | Tx: ${m.count}</div>
+      </div>
+    </div>`).join(''):'<div class="meta">এখনো কোনো মাস close করা হয়নি।</div>';
+  if(window.monthStatus){
+    monthStatus.innerHTML=a[0]?`<div class="insight">শেষ Closed Month: ${a[0].key}</div>`:'<div class="meta">এই মাস close করলে archive তৈরি হবে।</div>';
+  }
+}
+function renderFinancialCalendar(){
+  if(!window.financialCalendar)return;
+  let now=new Date();
+  let y=now.getFullYear(), m=now.getMonth();
+  let first=new Date(y,m,1).getDay();
+  let days=new Date(y,m+1,0).getDate();
+  let key=y+'-'+String(m+1).padStart(2,'0');
+  let map={};
+  transactions.forEach(t=>{
+    if(String(t.date).slice(0,7)===key){
+      map[t.date]??={income:0,expense:0,count:0};
+      if(t.type==='income')map[t.date].income+=Number(t.amount||0);
+      if(t.type==='expense')map[t.date].expense+=Number(t.amount||0);
+      map[t.date].count++;
+    }
+  });
+  let html='<div class="cal-grid">';
+  ['রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র','শনি'].forEach(d=>html+=`<div class="cal-head">${d}</div>`);
+  for(let i=0;i<first;i++)html+='<div></div>';
+  for(let d=1;d<=days;d++){
+    let ds=key+'-'+String(d).padStart(2,'0');
+    let v=map[ds]||{income:0,expense:0,count:0};
+    let cls=v.income&&v.expense?'mixed-day':v.income?'income-day':v.expense?'expense-day':'';
+    let net=v.income-v.expense;
+    html+=`<div class="cal-day ${cls}" onclick="showDayTransactions('${ds}')"><b>${d}</b><br>${v.count?fmtSigned(net):'-'}</div>`;
+  }
+  html+='</div><div class="meta" style="margin-top:10px">🟢 আয়, 🔴 খরচ, 🟡 মিক্সড। দিনের বক্সে চাপলে লেনদেন দেখাবে।</div>';
+  financialCalendar.innerHTML=html;
+}
+function showDayTransactions(ds){
+  let list=transactions.filter(t=>t.date===ds);
+  if(!list.length){showToast('এই দিনে কোনো লেনদেন নেই');return}
+  alert(ds+'\\n\\n'+list.map(t=>`${t.type==='income'?'+':'-'}৳${fmt(t.amount)} — ${t.category} — ${t.note||''}`).join('\\n'));
+}
+
+function incomeSourceMap(list=transactions){
+ let m={};
+ list.filter(t=>t.type==='income').forEach(t=>{
+  let s=(t.source||t.note||t.category||'Unknown').trim() || 'Unknown';
+  m[s]=(m[s]||0)+Number(t.amount||0);
+ });
+ return m;
+}
+function renderIncomeSourceDash(){
+ if(!window.incomeSourceDash)return;
+ let m=incomeSourceMap();
+ let total=Object.values(m).reduce((a,b)=>a+b,0);
+ let arr=Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,5);
+ if(!arr.length){incomeSourceDash.innerHTML='<div class="meta">আয়ের Source দিলে এখানে analytics দেখাবে।</div>';return}
+ incomeSourceDash.innerHTML=arr.map(([s,a])=>{
+  let pct=Math.round(a/total*100);
+  return `<div class="item"><div class="ico">💹</div><div class="info"><div class="title">${s}</div><div class="meta">${pct}% of income</div><div class="progress"><div class="bar" style="width:${pct}%;background:var(--income)"></div></div></div><b class="income">৳${fmt(a)}</b></div>`;
+ }).join('');
+}
+function drawIncomeSourceChart(list){
+ if(!window.incomeSourceChart)return;
+ let c=incomeSourceChart,ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
+ let m=incomeSourceMap(list),arr=Object.entries(m).sort((a,b)=>b[1]-a[1]).slice(0,6);
+ let total=arr.reduce((s,x)=>s+x[1],0);
+ if(!total){ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--muted');ctx.font='22px Hind Siliguri';ctx.fillText('Income source data নেই',245,155);return}
+ let colors=['#22c55e','#38bdf8','#7c3aed','#f59e0b','#ec4899','#14b8a6'];
+ let start=-Math.PI/2,cx=210,cy=150,r=95;
+ arr.forEach((x,i)=>{let ang=x[1]/total*Math.PI*2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,start+ang);ctx.closePath();ctx.fillStyle=colors[i%colors.length];ctx.fill();start+=ang});
+ ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc(cx,cy,52,0,Math.PI*2);ctx.fill();ctx.globalCompositeOperation='source-over';
+ ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--text');ctx.font='20px Hind Siliguri';ctx.fillText('৳'+fmt(total),cx-38,cy+7);
+ arr.forEach((x,i)=>{let y=65+i*34;ctx.fillStyle=colors[i%colors.length];ctx.fillRect(390,y,18,18);ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--text');ctx.font='17px Hind Siliguri';ctx.fillText(`${x[0]} — ৳${fmt(x[1])}`,420,y+15)});
+}
+
+function drawMonths(){let c=monthChart,ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);let m={};transactions.forEach(t=>{let k=t.date.slice(0,7);m[k]??={income:0,expense:0};m[k][t.type]+=t.amount});let arr=Object.entries(m).sort().slice(-6),mx=Math.max(...arr.flatMap(x=>[x[1].income,x[1].expense]),1);arr.forEach(([mon,v],i)=>{let x=40+i*105,hi=v.income/mx*150,he=v.expense/mx*150;ctx.fillStyle='#22c55e';ctx.fillRect(x,210-hi,35,hi);ctx.fillStyle='#f43f5e';ctx.fillRect(x+40,210-he,35,he);ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--text');ctx.font='15px Hind Siliguri';ctx.fillText(mon.slice(5),x+18,238)})}
+async function saveLoan(){
+ let a=+loanAmount.value;
+ if(!loanPerson.value||!a)return showToast('নাম ও টাকা লিখো',1);
+ await put('loans',{id:Date.now(),person:loanPerson.value.trim(),amount:a,type:loanType.value,due:loanDue.value,interest:+loanInterest.value||0,note:loanNote.value,date:new Date().toISOString().slice(0,10)});
+ loans=await all('loans');
+ loanPerson.value=loanAmount.value=loanNote.value=loanDue.value=loanInterest.value='';
+ renderLoans();renderLoanAlerts();renderDashboard();showToast('🔵 Loan entry সেভ হয়েছে');
+}
+function loanSummary(){
+ let m={};
+ loans.forEach(l=>{
+  m[l.person]??={taken:0,repaid:0,given:0,received:0,items:[]};
+  m[l.person][l.type]=(m[l.person][l.type]||0)+l.amount;
+  m[l.person].items.push(l);
+ });
+ return m;
+}
+function renderLoans(){
+ let m=loanSummary();
+ loanList.innerHTML=Object.entries(m).map(([p,v])=>{
+  let payable=v.taken-v.repaid;
+  let receivable=v.given-v.received;
+  let rows=v.items.sort((a,b)=>b.id-a.id).map(l=>`<div class="item"><div class="ico">${l.type==='taken'?'📥':l.type==='given'?'📤':l.type==='repaid'?'✅':'💵'}</div><div class="info"><div class="title">${loanTypeLabel(l.type)} — ৳${fmt(l.amount)}</div><div class="meta">${l.date}${l.due?' | Due: '+l.due:''}${l.interest?' | Interest '+l.interest+'%':''} — ${l.note||''}</div></div><div class="act" onclick="deleteLoan(${l.id})">✕</div></div>`).join('');
+  return `<div class="card"><h3>${p}</h3>
+  <div class="grid2">
+    <div class="mini-card"><div class="label">আমার পরিশোধ বাকি</div><div class="amount ${payable>0?'expense':'income'}">৳${fmt(payable)}</div></div>
+    <div class="mini-card"><div class="label">আমি পাবো</div><div class="amount ${receivable>0?'blue':'income'}">৳${fmt(receivable)}</div></div>
+  </div><div style="height:10px"></div>${rows}</div>`
+ }).join('')||'<div class="card">ঋণ নেই</div>';
+ renderLoanAlerts();
+}
+function loanTypeLabel(t){
+ return t==='taken'?'ঋণ নিয়েছি':t==='given'?'ঋণ দিয়েছি':t==='repaid'?'পরিশোধ করেছি':'ফেরত পেয়েছি';
+}
+async function deleteLoan(id){
+ if(!confirm('Loan entry মুছবে?'))return;
+ await del('loans',id);
+ loans=await all('loans');
+ renderLoans();renderDashboard();showToast('Loan entry মুছে গেছে');
+}
+function daysUntilDate(date){
+ if(!date)return null;
+ let today=new Date(new Date().toISOString().slice(0,10));
+ let d=new Date(date);
+ return Math.ceil((d-today)/86400000);
+}
+function renderLoanAlerts(){
+ let target1=window.loanAlerts, target2=window.loanDashAlerts;
+ let due=loans.filter(l=>['taken','given'].includes(l.type)&&l.due).map(l=>({...l,days:daysUntilDate(l.due)})).filter(l=>l.days!==null).sort((a,b)=>a.days-b.days).slice(0,6);
+ let html=due.length?due.map(l=>{
+  let cls=l.days<0?'alert100':l.days<=3?'alert100':l.days<=7?'alert80':'';
+  let msg=l.days<0?`Overdue ${Math.abs(l.days)} দিন`:l.days===0?'আজ Due':`${l.days} দিন বাকি`;
+  return `<div class="insight ${cls}">🔔 ${l.person} — ${loanTypeLabel(l.type)} — ৳${fmt(l.amount)} — ${msg}</div>`;
+ }).join(''):'<div class="meta">Due date সহ loan দিলে reminder দেখাবে।</div>';
+ if(target1)target1.innerHTML=html;
+ if(target2)target2.innerHTML=html;
+}
+async function saveBudget(){budgets[budgetCat.value]=+budgetAmt.value;await kvSet('budgets',budgets);renderBudgets();renderDashboard();showToast('Budget সেভ হয়েছে')}
+function renderBudgets(){
+ if(!budgetList)return;
+ let ym=new Date().toISOString().slice(0,7);
+ budgetList.innerHTML=Object.entries(budgets).map(([c,l])=>{
+  let used=transactions.filter(t=>t.type==='expense'&&t.category===c&&t.date.slice(0,7)===ym).reduce((s,t)=>s+t.amount,0);
+  let pct=Math.round(used/l*100||0);
+  let status=pct>=120?'Critical':pct>=100?'Over Limit':pct>=80?'Warning':'Safe';
+  let cls=pct>=100?'expense':pct>=80?'warn':'income';
+  let color=pct>=100?'var(--expense)':pct>=80?'var(--warn)':'var(--income)';
+  return `<div class="item"><div class="info"><div class="title">${c} <span class="${cls}">• ${status}</span></div><div class="meta">লিমিট ৳${fmt(l)}, খরচ ৳${fmt(used)}, বাকি ৳${fmt(Math.max(0,l-used))}</div><div class="progress"><div class="bar" style="width:${Math.min(100,pct)}%;background:${color}"></div></div></div><b class="${cls}">${pct}%</b></div>`
+ }).join('')||'<p class="meta">কোনো budget নেই</p>';
+}
+function checkBudget(t){
+ let l=budgets[t.category];
+ if(t.type==='expense'&&l){
+  let ym=t.date.slice(0,7),u=transactions.filter(x=>x.category===t.category&&x.type==='expense'&&x.date.slice(0,7)===ym).reduce((s,x)=>s+x.amount,0);
+  let pct=Math.round(u/l*100);
+  if(pct>=120)showToast(`🚨 Critical: ${t.category} budget ${pct}%`,1);
+  else if(pct>=100)showToast(`🚨 ${t.category} budget limit পার হয়েছে`,1);
+  else if(pct>=80)showToast(`⚠️ ${t.category} budget ${pct}% ব্যবহার হয়েছে`,1);
+  renderBudgetAlerts();renderUpcomingPayments();
+ }
+}
+async function saveRecurring(){
+ let a=+recAmt.value,d=+recDay.value;
+ if(!a||!d)return showToast('টাকা ও দিন লিখো',1);
+ await put('rec',{id:Date.now(),type:recType.value,amount:a,day:d,note:recNote.value,last:'',category:recCategory.value,wallet:recWallet.value||'Cash'});
+ recurring=await all('rec');assets=await all('assets');netWorthHistory=await kvGet('netWorthHistory')||[];
+ recAmt.value='';recDay.value='';recNote.value='';
+ renderRecurring();renderUpcomingPayments();showToast('📅 Recurring সেভ হয়েছে');
+}
+function renderRecurring(){
+ if(!recList)return;
+ recList.innerHTML=recurring.map(r=>{
+  let days=daysUntilDay(r.day);
+  return `<div class="item"><div class="ico">🔁</div><div class="info"><div class="title">${r.note||'Recurring'} ${r.type==='expense'?'🔴':'🟢'}</div><div class="meta">প্রতি মাসের ${r.day} তারিখ — ৳${fmt(r.amount)} — ${r.wallet||'Cash'} — ${days===0?'আজ':days+' দিন পরে'}</div><div class="progress"><div class="bar" style="width:${Math.max(5,100-days/31*100)}%;background:${days<=3?'var(--expense)':days<=7?'var(--warn)':'var(--blue)'}"></div></div></div><div class="act" onclick="deleteRecurring(${r.id})">✕</div></div>`
+ }).join('')||'<p class="meta">কোনো recurring নেই</p>';
+}
+async function runRecurring(){let now=new Date(),ym=now.toISOString().slice(0,7);for(const r of recurring){if(now.getDate()>=r.day&&r.last!==ym){await put('tx',{id:Date.now()+r.id,type:r.type,amount:r.amount,category:r.category||(r.type==='income'?'অন্যান্য আয়':'অন্যান্য খরচ'),wallet:r.wallet||'Cash',date:ym+'-'+String(r.day).padStart(2,'0'),note:r.note||'Auto recurring'});r.last=ym;await put('rec',r)}}transactions=await all('tx')}
+async function savePIN(){if(pinInput.value.length<4)return showToast('কমপক্ষে ৪ সংখ্যা',1);await kvSet('pin',pinInput.value);pinInput.value='';showToast('PIN সেট হয়েছে')}
+async function checkPIN(){let p=await kvGet('pin');if(p){let x=prompt('PIN দিন');if(x!==p){document.body.innerHTML='<h2 style="padding:30px">Wrong PIN</h2>'}}}
+async function toggleTheme(){document.body.classList.toggle('light');await kvSet('theme',document.body.classList.contains('light')?'light':'dark');renderReport()}
+function nightlyReminder(){let h=new Date().getHours(),k='rem_'+new Date().toISOString().slice(0,10);if(h>=21&&!localStorage.getItem(k)){showToast('🔔 আজকের হিসাব লিখেছো?');localStorage.setItem(k,'1')}}
+function exportData(){let blob=new Blob([JSON.stringify({transactions,loans,budgets,recurring,wallets,goals,assets,netWorthHistory},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hisab_pro_v3_0_checked_backup.json';a.click()}
+function exportCSV(){let rows=['date,type,category,wallet,source,amount,note,has_receipt',...transactions.map(t=>`${t.date},${t.type},${t.category},${t.wallet||'Cash'},${t.source||''},${t.amount},"${t.note||''}",${t.receipt?'yes':'no'}`)];let blob=new Blob([rows.join('\n')],{type:'text/csv'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hisab_export.csv';a.click()}
+function exportPDF(){window.print()}
+async function importData(e){let f=e.target.files[0];if(!f)return;let o=JSON.parse(await f.text());for(const t of (o.transactions||o))await put('tx',t);if(o.loans)for(const l of o.loans)await put('loans',l);if(o.budgets){budgets=o.budgets;await kvSet('budgets',budgets)}if(o.wallets){wallets=o.wallets;await kvSet('wallets',wallets)}if(o.goals){goals=o.goals;await kvSet('goals',goals)}if(o.assets){for(const a of o.assets)await put('assets',a);assets=await all('assets')}if(o.netWorthHistory){netWorthHistory=o.netWorthHistory;await kvSet('netWorthHistory',netWorthHistory)}transactions=await all('tx');loans=await all('loans');updateAll();showToast('Restore হয়েছে')}
+async function clearAll(){if(!confirm('সব মুছবে?'))return;indexedDB.deleteDatabase('HisabProV21DB');location.reload()}
+
+function walletBalance(name){
+  let start=Number(wallets[name]||0);
+  let flow=transactions.filter(t=>(t.wallet||'Cash')===name).reduce((s,t)=>s+(t.type==='income'?t.amount:-t.amount),0);
+  return start+flow;
+}
+function fillWalletSelect(){
+ let keys=Object.keys(wallets||{}); if(!keys.length){wallets={'Cash':0,'bKash':0,'Nagad':0,'Bank':0}; keys=Object.keys(wallets);}
+ let opts=keys.map(w=>`<option value="${w}">${w}</option>`).join('');
+ if(window.wallet) wallet.innerHTML=opts;
+ if(window.recWallet) recWallet.innerHTML=opts;
+}
+function renderWalletDash(){
+  if(!window.walletDash)return;
+  walletDash.innerHTML=Object.keys(wallets).map(w=>`<div class="mini-card"><div class="label">${w}</div><div class="amount ${walletBalance(w)>=0?'income':'expense'}">৳${fmt(walletBalance(w))}</div></div>`).join('');
+}
+function renderWalletList(){
+  if(!window.walletList)return;
+  walletList.innerHTML=Object.keys(wallets).map(w=>`<div class="item"><div class="ico">💳</div><div class="info"><div class="title">${w}</div><div class="meta">Starting ৳${fmt(wallets[w])} — Current ৳${fmt(walletBalance(w))}</div></div><div class="act" onclick="deleteWallet('${w}')">✕</div></div>`).join('');
+}
+async function saveWallet(){
+  let name=walletName.value.trim(), start=Number(walletStart.value||0);
+  if(!name)return showToast('Wallet নাম লিখো',1);
+  wallets[name]=start;await kvSet('wallets',wallets);
+  walletName.value='';walletStart.value='';
+  fillWalletSelect();renderWalletDash();renderWalletList();showToast('✅ Wallet সেভ হয়েছে');
+}
+async function deleteWallet(name){
+  if(['Cash','bKash','Nagad','Bank'].includes(name))return showToast('Default wallet মুছা যাবে না',1);
+  if(transactions.some(t=>(t.wallet||'Cash')===name))return showToast('এই Wallet-এ transaction আছে',1);
+  delete wallets[name];await kvSet('wallets',wallets);fillWalletSelect();renderWalletDash();renderWalletList();
+}
+
+
+async function saveGoal(){
+ let n=goalName.value.trim();
+ let t=Number(goalTarget.value||0);
+ let s=Number(goalSaved.value||0);
+ if(!n||!t)return showToast('Goal তথ্য দিন',1);
+ goals[n]={target:t,saved:s,deadline:goalDeadline.value};
+ await kvSet('goals',goals);
+ goalName.value='';goalTarget.value='';goalSaved.value='';goalDeadline.value='';
+ renderGoals();renderGoalDashboard();showToast('🎯 Goal সেভ হয়েছে');
+}
+function renderGoals(){
+ if(!window.goalList)return;
+ goalList.innerHTML=Object.entries(goals).map(([n,g])=>{
+ let pct=Math.min(100,Math.round((g.saved/g.target)*100||0));
+ let rem=Math.max(0,g.target-g.saved);
+ return `<div class="item"><div class="info"><div class="title">${n} ${pct>=100?'🏆':''}</div><div class="meta">Target ৳${fmt(g.target)} | Saved ৳${fmt(g.saved)} | Remaining ৳${fmt(rem)}</div><div class="progress"><div class="bar" style="width:${pct}%"></div></div></div><b>${pct}%</b></div>`
+ }).join('') || '<p class="meta">কোনো Goal নেই</p>';
+}
+function renderGoalDashboard(){
+ if(!window.goalDashboard)return;
+ goalDashboard.innerHTML=Object.entries(goals).slice(0,4).map(([n,g])=>{
+ let pct=Math.min(100,Math.round((g.saved/g.target)*100||0));
+ return `<div class="insight">🎯 ${n} — ${pct}% complete</div>`
+ }).join('') || '<div class="meta">কোনো Goal নেই</div>';
+}
+
+
+
+function fillRecurringSelects(){
+ if(window.recCategory) recCategory.innerHTML=[...EXPENSE_CATS,...INCOME_CATS].map(c=>`<option>${c}</option>`).join('');
+ if(window.recWallet) recWallet.innerHTML=Object.keys(wallets).map(w=>`<option>${w}</option>`).join('');
+}
+function daysUntilDay(day){
+ let now=new Date(), y=now.getFullYear(), m=now.getMonth();
+ let target=new Date(y,m,day);
+ if(target < new Date(now.getFullYear(),now.getMonth(),now.getDate())) target=new Date(y,m+1,day);
+ let diff=Math.ceil((target-new Date(now.getFullYear(),now.getMonth(),now.getDate()))/86400000);
+ return diff;
+}
+function renderUpcomingPayments(){
+ if(!window.upcomingPayments)return;
+ let list=[...recurring].filter(r=>r.type==='expense').map(r=>({...r,days:daysUntilDay(r.day)})).sort((a,b)=>a.days-b.days).slice(0,6);
+ if(!list.length){upcomingPayments.innerHTML='<div class="meta">Recurring expense set করলে upcoming payment দেখাবে।</div>';return}
+ upcomingPayments.innerHTML=list.map(r=>{
+  let cls=r.days<=3?'alert100':r.days<=7?'alert80':'';
+  let tag=r.days===0?'আজ':r.days+' দিন পরে';
+  return `<div class="insight ${cls}">📌 ${r.note||r.category||'Payment'} — ৳${fmt(r.amount)} — ${tag} — ${r.wallet||'Cash'}</div>`
+ }).join('');
+}
+async function deleteRecurring(id){
+ if(!confirm('Recurring payment মুছবে?'))return;
+ await del('rec',id);
+ recurring=await all('rec');assets=await all('assets');netWorthHistory=await kvGet('netWorthHistory')||[];
+ renderRecurring();renderUpcomingPayments();showToast('Recurring মুছে গেছে');
+}
+
+function getBudgetStatus(){
+ let ym=new Date().toISOString().slice(0,7);
+ return Object.entries(budgets).map(([cat,limit])=>{
+  let used=transactions.filter(t=>t.type==='expense'&&t.category===cat&&t.date.slice(0,7)===ym).reduce((s,t)=>s+t.amount,0);
+  let pct=Math.round(used/limit*100||0);
+  let level=pct>=120?'critical':pct>=100?'over':pct>=80?'warning':'safe';
+  return {cat,limit,used,pct,level,remaining:Math.max(0,limit-used)};
+ }).sort((a,b)=>b.pct-a.pct);
+}
+function renderBudgetAlerts(){
+ if(!window.budgetAlerts)return;
+ let data=getBudgetStatus();
+ let risky=data.filter(x=>x.pct>=80);
+ if(!data.length){budgetAlerts.innerHTML='<div class="meta">Budget set করলে alert দেখাবে।</div>';return}
+ if(!risky.length){budgetAlerts.innerHTML='<div class="insight">✅ সব budget safe zone-এ আছে।</div>';return}
+ budgetAlerts.innerHTML=risky.map(x=>{
+  let cls=x.pct>=100?'alert100':'alert80';
+  let msg=x.pct>=120?'🚨 Critical':x.pct>=100?'🔴 Over Limit':'⚠️ Warning';
+  return `<div class="insight ${cls}">${msg}: ${x.cat} — ${x.pct}% ব্যবহার হয়েছে। খরচ ৳${fmt(x.used)} / লিমিট ৳${fmt(x.limit)}</div>`
+ }).join('');
+}
+function monthlyOverspendingInsight(){
+ let now=new Date(),thisMonth=now.toISOString().slice(0,7);
+ let prev=new Date(now.getFullYear(),now.getMonth()-1,1).toISOString().slice(0,7);
+ let thisExp=transactions.filter(t=>t.type==='expense'&&t.date.slice(0,7)===thisMonth).reduce((s,t)=>s+t.amount,0);
+ let prevExp=transactions.filter(t=>t.type==='expense'&&t.date.slice(0,7)===prev).reduce((s,t)=>s+t.amount,0);
+ if(prevExp>0 && thisExp>prevExp){
+  let diff=thisExp-prevExp, pct=Math.round(diff/prevExp*100);
+  return `<div class="insight warnbox">📈 গত মাসের চেয়ে এই মাসে খরচ ${pct}% বেশি — ৳${fmt(diff)} অতিরিক্ত।</div>`;
+ }
+ return '';
+}
+
+
+function readReceiptFile(){
+ return new Promise(res=>{
+  if(!window.receiptFile || !receiptFile.files || !receiptFile.files[0]) return res('');
+  let f=receiptFile.files[0];
+  if(!f.type.startsWith('image/')) return res('');
+  let r=new FileReader();
+  r.onload=()=>res(r.result);
+  r.onerror=()=>res('');
+  r.readAsDataURL(f);
+ });
+}
+function renderReceiptGallery(){
+ if(!window.receiptGallery)return;
+ let list=transactions.filter(t=>t.receipt).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+ if(!list.length){receiptGallery.innerHTML='<div class="meta">এখনো কোনো receipt upload করা হয়নি।</div>';return}
+ receiptGallery.innerHTML=list.map(t=>`<div class="item" onclick="detailTransaction(${t.id})"><img class="receipt-img" src="${t.receipt}"><div class="info"><div class="title">${t.category} — ৳${fmt(t.amount)}</div><div class="meta">${t.date} — ${t.wallet||'Cash'}${t.source?' — '+t.source:''} — ${t.note||''}</div></div></div>`).join('');
+}
+
+
+function calculateFinanceMetrics(){
+ let income=transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+ let expense=transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+ let debt=Math.max(0,loanBalance());
+ let savings=Math.max(0,income-expense);
+
+ let savingsRate=income?Math.round((savings/income)*100):0;
+ let debtRatio=income?Math.round((debt/income)*100):0;
+
+ let months=[...new Set(transactions.map(t=>t.date.slice(0,7)))];
+ let incomeStability=Math.max(0,Math.min(100, 85 - Math.max(0,months.length<2?15:0)));
+ let expenseControl=Math.max(0,Math.min(100,100-Math.round((expense/(income||1))*100)+50));
+
+ let score=Math.round((incomeStability+expenseControl+savingsRate+(100-debtRatio))/4);
+
+ let grade='D';
+ if(score>=90) grade='A+';
+ else if(score>=80) grade='A';
+ else if(score>=70) grade='B';
+ else if(score>=60) grade='C';
+
+ return {income,expense,debt,savings,savingsRate,debtRatio,incomeStability,expenseControl,score,grade};
+}
+function renderFinancialIntelligence(){
+ if(!window.financialGrade) return;
+ let m=calculateFinanceMetrics();
+
+ let colorClass=m.grade==='A+'||m.grade==='A'?'income':m.grade==='B'?'warn':'expense';
+
+ financialGrade.innerHTML=`
+ <div class="gradeBox">
+   <div class="label">Financial Grade</div>
+   <div class="gradeLetter ${colorClass}">${m.grade}</div>
+   <div class="meta">Overall Score: ${m.score}/100</div>
+ </div>`;
+
+ financialMetrics.innerHTML=`
+ <div class="metricGrid">
+   <div class="mini-card"><div class="label">Savings Rate</div><div class="amount income">${m.savingsRate}%</div></div>
+   <div class="mini-card"><div class="label">Debt Ratio</div><div class="amount ${m.debtRatio>40?'expense':'income'}">${m.debtRatio}%</div></div>
+   <div class="mini-card"><div class="label">Income Stability</div><div class="amount blue">${m.incomeStability}%</div></div>
+   <div class="mini-card"><div class="label">Expense Control</div><div class="amount warn">${m.expenseControl}%</div></div>
+ </div>
+ <div style="height:10px"></div>
+ <div class="insight">💰 Savings: ৳${fmt(m.savings)}</div>
+ <div class="insight">📉 Debt: ৳${fmt(m.debt)}</div>
+ <div class="insight">${m.savingsRate<10?'⚠️ সঞ্চয় হার কম।':'✅ সঞ্চয় হার ভালো।'}</div>`;
+}
+
+
+function totalAssets(){
+ let manual=assets.reduce((s,a)=>s+Number(a.value||0),0);
+ let walletTotal=Object.keys(wallets).reduce((s,w)=>s+walletBalance(w),0);
+ return manual+walletTotal;
+}
+function totalLiabilities(){
+ return Math.max(0,loanBalance());
+}
+function netWorth(){
+ return totalAssets()-totalLiabilities();
+}
+async function saveAsset(){
+ let name=assetName.value.trim(), value=Number(assetValue.value||0);
+ if(!name||!value)return showToast('Asset নাম ও Value লিখো',1);
+ await put('assets',{id:Date.now(),name,value,type:assetType.value,note:assetNote.value,date:new Date().toISOString().slice(0,10)});
+ assets=await all('assets');
+ assetName.value='';assetValue.value='';assetNote.value='';
+ await snapshotNetWorth();
+ renderAssets();renderNetWorth();renderIncomeSourceDash();renderDashboard();
+ showToast('💎 Asset সেভ হয়েছে');
+}
+async function deleteAsset(id){
+ if(!confirm('Asset মুছবে?'))return;
+ await del('assets',id);
+ assets=await all('assets');
+ await snapshotNetWorth();
+ renderAssets();renderNetWorth();renderIncomeSourceDash();renderDashboard();
+}
+async function snapshotNetWorth(){
+ let ym=new Date().toISOString().slice(0,7);
+ let nw=netWorth();
+ let found=netWorthHistory.find(x=>x.month===ym);
+ if(found)found.value=nw; else netWorthHistory.push({month:ym,value:nw});
+ netWorthHistory=netWorthHistory.sort((a,b)=>a.month.localeCompare(b.month)).slice(-12);
+ await kvSet('netWorthHistory',netWorthHistory);
+}
+function renderNetWorth(){
+ if(window.netWorthSummary){
+  let a=totalAssets(), l=totalLiabilities(), n=netWorth();
+  netWorthSummary.innerHTML=`<div class="grid3">
+   <div class="mini-card"><div class="label">Assets</div><div class="amount income">৳${fmt(a)}</div></div>
+   <div class="mini-card"><div class="label">Liabilities</div><div class="amount expense">৳${fmt(l)}</div></div>
+   <div class="mini-card"><div class="label">Net Worth</div><div class="amount ${n>=0?'blue':'expense'}">৳${fmt(n)}</div></div>
+  </div>
+  <div style="height:10px"></div>
+  <div class="insight">💡 Wallet balance + Asset value - Loan payable = Net Worth</div>`;
+ }
+ if(window.netWorthDash){
+  let n=netWorth(), a=totalAssets(), l=totalLiabilities();
+  netWorthDash.innerHTML=`<div class="grid3">
+   <div class="mini-card"><div class="label">Assets</div><div class="amount income">৳${fmt(a)}</div></div>
+   <div class="mini-card"><div class="label">Liability</div><div class="amount expense">৳${fmt(l)}</div></div>
+   <div class="mini-card"><div class="label">Net Worth</div><div class="amount ${n>=0?'blue':'expense'}">৳${fmt(n)}</div></div>
+  </div>`;
+ }
+ drawNetWorthChart();
+}
+function renderAssets(){
+ if(!window.assetList)return;
+ assetList.innerHTML=assets.sort((a,b)=>b.value-a.value).map(a=>`<div class="item"><div class="ico">💎</div><div class="info"><div class="title">${a.name}</div><div class="meta">${assetTypeLabel(a.type)} — ${a.date} — ${a.note||''}</div></div><div class="amt income">৳${fmt(a.value)}</div><div class="act" onclick="deleteAsset(${a.id})">✕</div></div>`).join('')||'<div class="card">কোনো Asset নেই</div>';
+}
+function assetTypeLabel(t){
+ return t==='physical'?'Physical Asset':t==='cash'?'Cash/Bank Asset':t==='digital'?'Digital Asset':'Other Asset';
+}
+function drawNetWorthChart(){
+ if(!window.netWorthChart)return;
+ let c=netWorthChart,ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
+ let arr=netWorthHistory.length?netWorthHistory:[{month:new Date().toISOString().slice(0,7),value:netWorth()}];
+ let max=Math.max(...arr.map(x=>Math.abs(x.value)),1), base=210;
+ ctx.strokeStyle='#38bdf8';ctx.lineWidth=4;ctx.beginPath();
+ arr.forEach((p,i)=>{let x=45+i*(600/Math.max(1,arr.length-1)), y=base-(p.value/max*150); if(i===0)ctx.moveTo(x,y); else ctx.lineTo(x,y);});
+ ctx.stroke();
+ arr.forEach((p,i)=>{let x=45+i*(600/Math.max(1,arr.length-1)), y=base-(p.value/max*150);ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();ctx.fillStyle=getComputedStyle(document.body).getPropertyValue('--text');ctx.font='14px Hind Siliguri';ctx.fillText(p.month.slice(5),x-8,238);});
+}
+
+function showPage(p){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');document.querySelectorAll('.nav')[['dashboard','add','list','report','loan','assets','receipts','settings'].indexOf(p)].classList.add('active');if(p==='dashboard')renderDashboard();if(p==='list')renderList();if(p==='report'){renderReport();renderMonthArchive();renderFinancialCalendar();}if(p==='loan')renderLoans();if(p==='assets'){snapshotNetWorth();renderAssets();renderNetWorth()}if(p==='receipts')renderReceiptGallery();if(p==='settings'){fillRecurringSelects();renderGoals();renderWalletList();renderBudgets();renderRecurring();renderUpcomingPayments()}}
+function showToast(m,e=0){toast.textContent=m;toast.className='toast show'+(e?' err':'');setTimeout(()=>toast.className='toast',2500)}
+
+let deferredInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',(e)=>{
+ e.preventDefault();
+ deferredInstallPrompt=e;
+ if(window.installBtn) installBtn.style.display='block';
+});
+async function installPWA(){
+ if(!deferredInstallPrompt){
+  showToast('Chrome menu থেকে Add to Home screen চাপুন');
+  return;
+ }
+ deferredInstallPrompt.prompt();
+ await deferredInstallPrompt.userChoice;
+ deferredInstallPrompt=null;
+ if(window.installBtn) installBtn.style.display='none';
+}
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+ window.addEventListener('load',()=>{
+  navigator.serviceWorker.register('./sw.js')
+   .then(()=>console.log('Hisab Pro offline ready'))
+   .catch(err=>console.log('SW failed',err));
+ });
+}
+
+function coreStableCheck(){
+ updateCats();fillWalletSelect();fillBudgetCats();fillRecurringSelects();
+ if(window.category&&!category.options.length)category.innerHTML=EXPENSE_CATS.map(x=>`<option value="${x}">${x}</option>`).join('');
+ if(window.wallet&&!wallet.options.length)wallet.innerHTML=['Cash','bKash','Nagad','Bank'].map(x=>`<option value="${x}">${x}</option>`).join('');
+}
+init();setTimeout(coreStableCheck,400); setTimeout(()=>{if(window.receiptFile)receiptFile.onchange=()=>{receiptPreview.innerHTML=receiptFile.files[0]?'<span>✅ Receipt selected</span>':''}},500);
+</script>
+</body>
+</html>
